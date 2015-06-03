@@ -7,7 +7,7 @@ class Transformer:
         if self.max < 1:
             self.data = data
         else:
-            self.data = [x / (self.max+1) for x in data]
+            self.data = [float(x) / (self.max+1) for x in data]
 
     def toUniform(self, a, b):
         return [a + (b - a) * v for v in self.data]

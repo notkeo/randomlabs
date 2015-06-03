@@ -1,5 +1,4 @@
 # coding: utf8
-import math
 
 
 class Additive:
@@ -155,10 +154,13 @@ class RC4:
         k = self.k
         i, j = 0, 0
         for x in range(self.n):
-            i = (i + 1) % 256
-            j = (j + k[i]) % 256
-            k[i], k[j] = k[j], k[i]
-            yield k[(k[i] + k[j]) % 256]
+            value = 0
+            for x in range(0, 8, 2):
+                i = (i + 1) % 256
+                j = (j + k[i]) % 256
+                k[i], k[j] = k[j], k[i]
+                value += k[(k[i] + k[j]) % 256] * 10 ^ x
+            yield value
 
 
 class RSA:
@@ -179,7 +181,7 @@ class RSA:
         for x in range(self.count):
             value = []
             for i in range(32):
-                bit = int(math.pow(bit, self.e)) % self.n
+                bit = int(pow(bit, self.e, self.n))
                 value.append(bin(bit)[-1])
             yield int(''.join(value), 2)
 
@@ -197,5 +199,10 @@ class BSS:
     def next_value(self):
         xq = self.x
         for x in range(self.count):
-            xq = (xq ** 2) % self.n
+            mask = 1
+            value = 0
+            for x in xrange(32):
+                xq = (xq ** 2) % self.n
+                value |= (xq & mask)
+                value <<= x
             yield xq
